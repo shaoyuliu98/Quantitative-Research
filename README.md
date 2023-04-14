@@ -1,4 +1,4 @@
-# Quantitative Research
+# Systematic Trading Strategies
 This repository is designated to quantitative trading strategies in various asset classes, including U.S. Equities (In progress), Rates, FX, Commodity, and Crypto (In pipeline). 
 
 ## Current Project

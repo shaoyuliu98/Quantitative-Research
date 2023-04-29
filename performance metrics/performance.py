@@ -3,16 +3,19 @@ import pandas as pd
 from tabulate import tabulate
 
 class Trading_Strategy:
-    def __init__(self, input_df=None):
+    def __init__(self, input_df=None, input_print=False):
         # date, consolidated return of that date, sorted by date.
         # to do: Work on the difference between constant size betting vs. reinvesting.
         if len(input_df)>0:
             self.data = input_df
             self.ret = self.data['return']
             self.date = self.data['date']
-            print('Entering strategy inputs complete.')
+            if input_print:
+                print('Entering strategy inputs complete.')
         else:
             print('Empty strategy created.')
+        
+        self.consolidated_metrics = self.get_metrics()
 
     def sharpe(self):
         std = self.ret.std()
@@ -24,12 +27,11 @@ class Trading_Strategy:
         mean = self.ret.mean()
         return mean/std*np.sqrt(252)
 
-
     def vol(self):
         return self.ret.std()*np.sqrt(252)
 
     def net_profit(self):
-        return (self.ret+1).prod()-1
+        return self.ret.sum()
 
     def time_in_market(self):
         st = self.date.min()
@@ -55,7 +57,7 @@ class Trading_Strategy:
         return self.ret.loc[self.ret<0].min()
 
     def mdd(self):
-        cum_ret = (self.ret+1).cumprod()
+        cum_ret = self.ret.cumsum()+1
         return np.minimum((cum_ret - cum_ret.cummax())/cum_ret.cummax(),0).min()
 
     def calmar(self):
@@ -69,7 +71,7 @@ class Trading_Strategy:
         return self.ret.kurtosis()
 
     def get_metrics(self):
-        metrics = [self.sharpe(),
+        metrics = np.array([self.sharpe(),
                    self.sortino(),
                    self.net_profit(),
                    self.avg_ret(),
@@ -83,18 +85,22 @@ class Trading_Strategy:
                    self.vol(),
                    self.calmar(),
                    self.skewness(),
-                   self.kurtosis()]
+                   self.kurtosis()])
+        
+        metrics = np.round(metrics,5).tolist()
+        metrics = [self.date.min().date(),self.date.max().date()]+metrics
 
-        metrics = pd.DataFrame(metrics,index=['Annualized Sharpe', 'Annualized Sortino',
+        metrics = pd.DataFrame(metrics,index=['From','To','Annualized Sharpe', 'Annualized Sortino',
                                               'Cumulative Return','Avg Return',
                                               'Avg Win','Avg Loss','Win Ratio',
                                               'Max Winner','Max Loser',
                                               'Time in Market','Max Drawdown',
-                                              'Annualized Volatility','Annualized Calmar','Skew','Kurtosis'
-                                              ],
+                                              'Annualized Volatility','Annualized Calmar','Skew','Kurtosis'],
                                columns=['Value'])
-
-        print(tabulate(metrics,headers='keys', tablefmt='grid'))
+        return metrics
+    
+    def print_metrics(self):
+        print(tabulate(self.consolidated_metrics,headers='keys', tablefmt='grid'))
 
 if __name__ == '__main__':
     pseudo_date = pd.Series(pd.date_range('2023-01-01','2023-01-31'))
@@ -104,6 +110,6 @@ if __name__ == '__main__':
     pseudo.columns = ['date','return']
 
     pseudo_strat = Trading_Strategy(pseudo)
-    pseudo_strat.get_metrics()
+    pseudo_strat.print_metrics()
 
 

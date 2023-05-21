@@ -9,16 +9,21 @@ def get_yf_data(st,et,ticker):
     ticker_list = ticker.T.values[0]
 
     for i in ticker_list:
+        print(i)
         temp = pd.DataFrame(yf.download(i, start=st, end=et)[['Open','High','Low','Close','Adj Close']].stack()).reset_index()
         temp.columns = ['Date', 'Type', 'Price']
         temp['Ticker'] = i
         all_data = pd.concat([all_data, temp])
 
-        temp_yf_ticker = yf.Ticker(i)
-        sector_data.append([[i,temp_yf_ticker.info['sector']]])
+        if len(temp)!=0:
+            if i == 'CAT':
+                i_sector = 'Industrials'
+            else:
+                temp_yf_ticker = yf.Ticker(i)
+                i_sector = temp_yf_ticker.info['sector']
+            sector_data = pd.concat([sector_data,pd.Series([i,i_sector])],axis=1)
 
-        print(i)
-
+    sector_data = sector_data.T
     sector_data.columns=['Ticker','Sector']
 
     return all_data,sector_data

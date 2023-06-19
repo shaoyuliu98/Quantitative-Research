@@ -2,6 +2,7 @@ import pandas as pd
 import yfinance as yf
 import pytz
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 def get_yf_data(st,et,ticker):
     all_data = pd.DataFrame()
@@ -20,7 +21,11 @@ def get_yf_data(st,et,ticker):
                 i_sector = 'Industrials'
             else:
                 temp_yf_ticker = yf.Ticker(i)
-                i_sector = temp_yf_ticker.info['sector']
+                if 'sector' not in temp_yf_ticker.info:
+                    print(i,'Sector not found. Use "Others" instead.')
+                    i_sector = 'Others'
+                else:
+                    i_sector = temp_yf_ticker.info['sector']
             sector_data = pd.concat([sector_data,pd.Series([i,i_sector])],axis=1)
 
     sector_data = sector_data.T
@@ -30,13 +35,28 @@ def get_yf_data(st,et,ticker):
 
 if __name__ == '__main__':
     tz = pytz.timezone('America/New_York')
+    # SP 100
+    # start_dt = tz.localize(datetime(2009,12,31))
+    # end_dt = tz.localize(datetime(2023,1,1))
+    #
+    # tickers = pd.read_csv('./data/SP 100 tickers.csv')
+    #
+    # price_data,sector_data = get_yf_data(start_dt,end_dt,tickers)
+    #
+    # price_data.to_csv('./data/SP 100 Daily Data.csv',index=False)
+    # sector_data.to_csv('./data/SP 100 Sector Data.csv', index=False)
 
-    start_dt = tz.localize(datetime(2010,1,1))
-    end_dt = tz.localize(datetime(2023,1,1))
+    # Barchart Chart of the Day
+    data_info = pd.read_csv('./data/Chart of the Day Info.csv')
+    data_info['Signal Date'] = pd.to_datetime(data_info['Signal Date'])
+    data_info['Published Date'] = pd.to_datetime(data_info['Published Date'])
 
-    tickers = pd.read_csv('./data/SP 100 tickers.csv')
+    start_dt = tz.localize(data_info['Signal Date'].min()+relativedelta(months=-6))
+    end_dt = tz.localize(data_info['Published Date'].max())
 
-    price_data,sector_data = get_yf_data(start_dt,end_dt,tickers)
+    tickers = data_info[['Ticker']].copy()
 
-    price_data.to_csv('./data/SP 100 Daily Data.csv',index=False)
-    sector_data.to_csv('./data/SP 100 Sector Data.csv', index=False)
+    price_data, sector_data = get_yf_data(start_dt, end_dt, tickers)
+
+    price_data.to_csv('./data/Chart of the Day Daily Data.csv',index=False)
+    sector_data.to_csv('./data/Chart of the Day Sector Data.csv', index=False)

@@ -3,15 +3,14 @@ import pandas as pd
 from tabulate import tabulate
 
 class Trading_Strategy:
-    def __init__(self, input_df=None, input_print=False):
+    def __init__(self, input_df=None, freq='Daily'):
         # date, consolidated return of that date, sorted by date.
         # to do: Work on the difference between constant size betting vs. reinvesting.
         if len(input_df)>0:
             self.data = input_df
             self.ret = self.data['return']
             self.date = self.data['date']
-            if input_print:
-                print('Entering strategy inputs complete.')
+            self.freq = freq
         else:
             print('Empty strategy created.')
         
@@ -20,24 +19,35 @@ class Trading_Strategy:
     def sharpe(self):
         std = self.ret.std()
         mean = self.ret.mean()
-        return mean/std*np.sqrt(252)
+        if self.freq=='Daily':
+            return mean/std*np.sqrt(252)
+        if self.freq=='Monthly':
+            return mean/std*np.sqrt(12)
 
     def sortino(self):
         std = self.ret.loc[self.ret<0].std()
         mean = self.ret.mean()
-        return mean/std*np.sqrt(252)
+        if self.freq == 'Daily':
+            return mean/std*np.sqrt(252)
+        if self.freq == 'Monthly':
+            return mean/std*np.sqrt(12)
 
     def vol(self):
-        return self.ret.std()*np.sqrt(252)
+        if self.freq == 'Daily':
+            return self.ret.std()*np.sqrt(252)
+        if self.freq == 'Monthly':
+            return self.ret.std()*np.sqrt(12)
 
     def net_profit(self):
         return self.ret.sum()
 
     def time_in_market(self):
+        if self.freq == 'Monthly':
+            return np.nan
         st = self.date.min()
         et = self.date.max()
         return len(self.date)/((et-st).days+1)
-
+    
     def win_ratio(self):
         return sum(self.ret>0)/len(self.ret)
 
@@ -61,7 +71,10 @@ class Trading_Strategy:
         return np.minimum((cum_ret - cum_ret.cummax())/cum_ret.cummax(),0).min()
 
     def calmar(self):
-        avg_ret = self.avg_ret()*np.sqrt(252)
+        if self.freq=='Daily':
+            avg_ret = self.avg_ret()*np.sqrt(252)
+        if self.freq == 'Monthly':
+            avg_ret = self.avg_ret() * np.sqrt(12)
         return avg_ret/self.mdd()*-1
 
     def skewness(self):
@@ -88,7 +101,10 @@ class Trading_Strategy:
                    self.kurtosis()])
         
         metrics = np.round(metrics,5).tolist()
-        metrics = [self.date.min().date(),self.date.max().date()]+metrics
+        if self.freq == 'Daily':
+            metrics = [self.date.min().date(),self.date.max().date()]+metrics
+        if self.freq == 'Monthly':
+            metrics = [self.date.min(), self.date.max()] + metrics
 
         metrics = pd.DataFrame(metrics,index=['From','To','Annualized Sharpe', 'Annualized Sortino',
                                               'Cumulative Return','Avg Return',

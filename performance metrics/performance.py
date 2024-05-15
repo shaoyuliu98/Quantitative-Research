@@ -5,6 +5,7 @@ from tabulate import tabulate
 class Trading_Strategy:
     def __init__(self, input_df=None, freq='Daily'):
         # date, consolidated return of that date, sorted by date.
+        # use log return
         # to do: Work on the difference between constant size betting vs. reinvesting.
         if len(input_df)>0:
             self.data = input_df
@@ -41,12 +42,13 @@ class Trading_Strategy:
     def net_profit(self):
         return self.ret.sum()
 
-    def time_in_market(self):
-        if self.freq == 'Monthly':
-            return np.nan
-        st = self.date.min()
-        et = self.date.max()
-        return len(self.date)/((et-st).days+1)
+    # def time_in_market(self):
+    #     # to be improved. non trading days currently included
+    #     if self.freq == 'Monthly':
+    #         return np.nan
+    #     st = self.date.min()
+    #     et = self.date.max()
+    #     return len(self.date)/((et-st).days+1)
     
     def win_ratio(self):
         return sum(self.ret>0)/len(self.ret)
@@ -93,7 +95,7 @@ class Trading_Strategy:
                    self.win_ratio(),
                    self.max_win(),
                    self.max_loss(),
-                   self.time_in_market(),
+                   # self.time_in_market(),
                    self.mdd(),
                    self.vol(),
                    self.calmar(),
@@ -110,8 +112,8 @@ class Trading_Strategy:
                                               'Cumulative Return','Avg Return',
                                               'Avg Win','Avg Loss','Win Ratio',
                                               'Max Winner','Max Loser',
-                                              'Time in Market','Max Drawdown',
-                                              'Annualized Volatility','Annualized Calmar','Skew','Kurtosis'],
+                                              # 'Time in Market',
+                                              'Max Drawdown','Annualized Volatility','Annualized Calmar','Skew','Kurtosis'],
                                columns=['Value'])
         return metrics
     

@@ -7,7 +7,12 @@ from dateutil.relativedelta import relativedelta
 def get_yf_data(st,et,ticker,save_sector=True,price_type=['Open','High','Low','Close','Adj Close']):
     all_data = pd.DataFrame()
     sector_data = pd.DataFrame()
-    ticker_list = ticker.T.values[0]
+    if isinstance(ticker,list):
+        ticker_list = ticker.copy()
+    elif isinstance(ticker,pd.DataFrame):
+        ticker_list = ticker.T.values[0]
+    else:
+        raise Exception('Invalid Ticker List type.')
 
     for i in ticker_list:
         print(i)

@@ -1,7 +1,10 @@
 # Systematic Trading Strategies
 This repository is designated to quantitative trading strategies in various asset classes, including U.S. Equities, Rates, FX, and Commodity. 
 
-## Current Project
+## Strategy Replication
+1. 
+
+## Ad-Hoc Projects
 1. Intraday Return Analysis - Is there a general pattern in intraday price movement? When does the highest intraday return occur on average during a typical trading session? How does the profitability relate to trading volume and realized volatility?
 2. Gap Trading Strategy - The core logic is to chase the momentum in a financial market where information dissipates not all at once. Let it be positive/negative news related to a publicly traded company, which results in a significant price difference between open price at trading day t and close price at trading day t-1. Therefore, profits can be found before the price climbs up or falls back to the new "fair" equilibrium level.   
 3. Eigen Portfolio Replication - This is an exercise that explains how to construct an optimal portfolio using the principal components of a basket of securities. The appeal of this approach is the orthogonality of returns among those principal factors.

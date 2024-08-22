@@ -1,5 +1,5 @@
 # Systematic Trading Strategies
-This repository is designated to quantitative trading strategies in various asset classes, including U.S. Equities (In progress), Rates, FX, Commodity, and Crypto (In pipeline). 
+This repository is designated to quantitative trading strategies in various asset classes, including U.S. Equities, Rates, FX, and Commodity. 
 
 ## Current Project
 1. Intraday Return Analysis - Is there a general pattern in intraday price movement? When does the highest intraday return occur on average during a typical trading session? How does the profitability relate to trading volume and realized volatility?

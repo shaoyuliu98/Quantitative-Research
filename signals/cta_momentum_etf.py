@@ -113,15 +113,15 @@ if __name__ == '__main__':
     etf_list = [
         'SPY', 'IWM', 'EFA', 'EEM', 'QQQ',
         'XLE', 'XLK', 'XLY', 'IYR', 'SMH',
-        # 'LQD', 'IEF', 'TIP', 'TLT', 'AGG',
-        # 'UUP', 'FXE', 'FXF'
+        'LQD', 'IEF', 'TIP', 'TLT', 'AGG',
+        'UUP', 'FXE', 'FXF',
         'GLD', 'USO', 'DBC', 'SLV', 'UNG', 'CORN',
     ]
 
     stock_etf = ['SPY', 'IWM', 'EFA', 'EEM', 'QQQ']  # s&p, russell2000, eu/japan/aus, emerging market, nasdaq
     sector_etf = ['XLE', 'XLK', 'XLY', 'IYR', 'SMH']  # energy, tech, consumer discretionary, real estate, semi
-    # bond_etf = ['LQD', 'IEF', 'TIP', 'TLT','AGG'] # IG corp, 7-10yr treasury, inflation bond, 20+yr treasury, IG corp market
-    # fx_etf = ['UUP', 'FXE', 'FXF'] # US $ bull, Euro, Swiss Franc
+    bond_etf = ['LQD', 'IEF', 'TIP', 'TLT','AGG'] # IG corp, 7-10yr treasury, inflation bond, 20+yr treasury, IG corp market
+    fx_etf = ['UUP', 'FXE', 'FXF'] # US $ bull, Euro, Swiss Franc
     commod_etf = ['GLD', 'USO', 'DBC', 'SLV', 'UNG', 'CORN']  # gold, oil, commod index, silver, natural gas, corn
 
     # etf_list = list(set(etf_list)-set(fx_etf))
@@ -146,7 +146,7 @@ if __name__ == '__main__':
 
     strategy_cutoff = '2022-01'
 
-    momentum_strat = Momentum(etf_list, st, et, filename, momentum_window, long_only_table, force_run=False)
+    momentum_strat = Momentum(etf_list, st, et, filename, momentum_window, long_only_table, force_run=True)
 
     all_return = pd.DataFrame()
     all_return_perf = pd.DataFrame()

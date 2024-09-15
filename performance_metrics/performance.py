@@ -79,7 +79,7 @@ class Trading_Strategy:
         return self.ret.loc[self.ret < 0].min()
 
     def mdd(self):
-        cum_ret = self.ret.cumsum() + 1
+        cum_ret = np.exp(self.ret.cumsum())
         return np.minimum((cum_ret - cum_ret.cummax()) / cum_ret.cummax(), 0).min()
 
     def calmar(self):

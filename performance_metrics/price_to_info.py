@@ -1,7 +1,10 @@
+import sys
+sys.path.append('../')
+
 import pandas as pd
 import numpy as np
 import os
-from yfinance_data import get_yf_data
+from yfinance_data.yfinance_data import get_yf_data
 
 def init_data(fpath,st,et,tickers,sector=False,ptype=['Adj Close'],force_run=False):
     if (not os.path.isfile(fpath)) or force_run:
